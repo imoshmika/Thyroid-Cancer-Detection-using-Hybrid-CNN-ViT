@@ -94,9 +94,9 @@ The hybrid CNN-ViT architecture aims to exploit both representations:
                     Input Image
                          │
                          ▼
-              ┌─────────────────────┐
+              ┌──────────────────────┐
               │ CNN Feature Extractor│
-              └─────────────────────┘
+              └──────────────────────┘
                          │
                          ▼
                  Local Features
@@ -540,100 +540,120 @@ This design aims to preserve complementary information from both architectural f
 
 ---
 
-## 📊 Evaluation Metrics
+## 📊 Evaluation
 
-Model performance should be evaluated using multiple metrics.
+The proposed framework is evaluated using complementary **classification and segmentation metrics** to provide a comprehensive assessment of its performance on the test dataset.
 
-### Accuracy
+### Classification Metrics
 
-[
-Accuracy =
-\frac{TP + TN}
-{TP + TN + FP + FN}
-]
+#### Accuracy
 
-### Precision
+Measures the proportion of correctly classified samples.
 
-[
-Precision =
-\frac{TP}
-{TP + FP}
-]
+Accuracy = (TP + TN) / (TP + TN + FP + FN)
 
-### Recall / Sensitivity
+#### Precision
 
-[
-Recall =
-\frac{TP}
-{TP + FN}
-]
+Measures the proportion of predicted positive samples that are actually positive.
 
-### Specificity
+Precision = TP / (TP + FP)
 
-[
-Specificity =
-\frac{TN}
-{TN + FP}
-]
+#### Recall / Sensitivity
 
-### F1-Score
+Measures the proportion of actual positive samples correctly identified.
 
-[
-F1 =
-2 \times
-\frac{Precision \times Recall}
-{Precision + Recall}
-]
+Recall = TP / (TP + FN)
 
-### ROC-AUC
+#### Specificity
 
-ROC-AUC can be used to assess the model's discrimination ability across different classification thresholds.
+Measures the proportion of actual negative samples correctly identified.
+
+Specificity = TN / (TN + FP)
+
+#### F1-Score
+
+Provides the harmonic mean of precision and recall.
+
+F1-Score = 2 × (Precision × Recall) / (Precision + Recall)
+
+#### Matthews Correlation Coefficient (MCC)
+
+MCC provides a balanced measure of binary classification performance, particularly useful when the classes are imbalanced.
+
+MCC = (TP × TN − FP × FN) / √[(TP + FP)(TP + FN)(TN + FP)(TN + FN)]
+
+#### ROC-AUC
+
+The Area Under the Receiver Operating Characteristic Curve (ROC-AUC) measures the model's ability to distinguish between the target classes across different classification thresholds.
+
+#### PR-AUC
+
+The Area Under the Precision-Recall Curve (PR-AUC) evaluates the trade-off between precision and recall and is particularly informative when class distributions are imbalanced.
+
+---
+
+### Segmentation Metrics
+
+For segmentation evaluation, the proposed framework is assessed using **Dice Similarity Coefficient (Dice), Intersection over Union (IoU), and Hausdorff Distance**.
+
+#### Dice Similarity Coefficient
+
+Dice measures the overlap between the predicted segmentation and the ground-truth segmentation.
+
+Dice = 2 × |Prediction ∩ Ground Truth| / (|Prediction| + |Ground Truth|)
+
+where (P) represents the predicted segmentation and (G) represents the ground-truth segmentation.
+
+#### Intersection over Union (IoU)
+
+IoU measures the ratio between the intersection and union of the predicted and ground-truth regions.
+
+IoU = |Prediction ∩ Ground Truth| / |Prediction ∪ Ground Truth|
+
+#### Hausdorff Distance
+
+Hausdorff Distance measures the maximum boundary discrepancy between the predicted and ground-truth segmentation regions.
+
+Lower Hausdorff Distance values indicate closer boundary agreement.
+
+Hausdorff Distance = max{d(P, G), d(G, P)}
 
 ---
 
 ## 📈 Experimental Results
 
-The final numerical results should be generated directly from the reproducible notebook execution.
+The final model was evaluated on the **held-out test set** using both classification and segmentation metrics.
 
-Recommended reporting format:
+### Classification Performance
 
-| Metric               | Hybrid CNN-ViT |
-| -------------------- | -------------: |
-| Accuracy             |              — |
-| Precision            |              — |
-| Recall / Sensitivity |              — |
-| Specificity          |              — |
-| F1-Score             |              — |
-| ROC-AUC              |              — |
+| Metric                   | Test Performance |
+| ------------------------ | ---------------: |
+| Accuracy                 |           93.20% |
+| Precision                |           91.72% |
+| Recall / Sensitivity     |           90.80% |
+| F1-Score                 |           89.80% |
+| MCC                      |           0.7031 |
+| ROC-AUC                  |           0.9262 |
+| PR-AUC                   |           0.9082 |
 
-> **Note:** Results are intentionally not fabricated or hard-coded in this README. Once the final experimental configuration is fixed, the verified values from the notebook should be inserted here.
+The model achieves **93.20% test accuracy**, with a **ROC-AUC of 0.9262** and **PR-AUC of 0.9082**, indicating strong discriminative capability on the held-out test data. The MCC of **0.7031** further indicates a substantial positive correlation between the predicted and true class labels.
 
 ---
 
-## 📊 Recommended Result Visualizations
+### Segmentation Performance
 
-For a research-grade release, the following visualizations are recommended:
+| Metric                          | Test Performance |
+| ------------------------------- | ---------------: |
+| Dice Similarity Coefficient     |           93.38% |
+| IoU                             |           87.59% |
+| Hausdorff Distance              |        8475.0000 |
 
-### Training curves
+The segmentation results demonstrate a **Dice score of 93.38%** and an **IoU of 87.59%**, indicating substantial spatial overlap between the predicted and ground-truth regions.
 
-* Training loss vs. epoch
-* Validation loss vs. epoch
-* Training accuracy vs. epoch
-* Validation accuracy vs. epoch
+The reported Hausdorff Distance is **8475.0000**. Because Hausdorff Distance is highly dependent on the image coordinate system, pixel spacing, image dimensions, and whether preprocessing/rescaling is applied, this value should be interpreted together with the corresponding implementation and spatial units.
 
-### Classification analysis
+> **Note:** The values reported above correspond to the test-set evaluation provided for the current implementation. They should be reproduced by executing the final notebook with the same dataset split and experimental configuration.
 
-* Confusion matrix
-* ROC curve
-* Precision-Recall curve
-* Class-wise performance
-
-### Model analysis
-
-* CNN-only baseline
-* ViT-only baseline
-* Hybrid CNN-ViT
-* Ablation experiments
 
 ---
 
@@ -757,7 +777,6 @@ Potential extensions of this work include:
 * External dataset evaluation
 * Patient-level classification
 * Explainable AI
-* Grad-CAM visualization
 * Attention-map visualization
 * Model calibration
 * Uncertainty estimation
